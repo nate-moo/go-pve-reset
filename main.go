@@ -28,13 +28,21 @@ func main() {
 
 func resetHandler(writer http.ResponseWriter, request *http.Request) {
 	split := strings.Split(request.URL.String(), "/")
+
 	err := exec.Command("qm", "stop", split[3]).Run()
-	errr := exec.Command("qm", "destroy", split[3]).Run()
-	cmd := exec.Command("qm", "clone", split[2], split[3], "--name", split[4])
-	log.Printf("%v", cmd.String())
-	errrr := cmd.Run()
-	output, _ := cmd.CombinedOutput()
-	log.Printf("%s", output)
-	log.Printf("%v, %v, %v", err, errr, errrr)
+	if err != nil {
+		return
+	}
+
+	err = exec.Command("qm", "destroy", split[3]).Run()
+	if err != nil {
+		return
+	}
+
+	err = exec.Command("qm", "clone", split[2], split[3], "--name", split[4]).Run()
+	if err != nil {
+		return
+	}
+
 	log.Println(split[2], split[3], split[4])
 }
