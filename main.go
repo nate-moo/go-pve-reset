@@ -19,8 +19,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", index)
-	http.HandleFunc("/test.html", serveFile)
+	http.HandleFunc("/reset", serveFile)
+	//http.HandleFunc("/test.html", serveFile)
 	http.HandleFunc("/reset/", resetHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
