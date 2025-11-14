@@ -31,17 +31,17 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 
 	err := exec.Command("qm", "stop", split[3]).Run()
 	if err != nil {
-		return
+		log.Println("qm stop " + split[3] + "failed")
 	}
 
 	err = exec.Command("qm", "destroy", split[3]).Run()
 	if err != nil {
-		return
+		log.Println("qm destroy " + split[3] + "failed")
 	}
 
 	err = exec.Command("qm", "clone", split[2], split[3], "--name", split[4]).Run()
 	if err != nil {
-		return
+		log.Println("qm clone " + split[2] + "->" + split[3] + "failed")
 	}
 
 	// pvesh set /access/acl -path /vms/{vmid} -roles PVEVMUser -groups SD_Users
@@ -49,7 +49,7 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 
 	err = cmd.Run()
 	if err != nil {
-		return
+		log.Println("pvesh " + "set " + "/access/acl " + "-path " + "/vms/" + split[3] + " -roles " + "PVEVMUser " + "-groups " + "SD_Users " + "failed")
 	}
 
 	log.Println(split[2], split[3], split[4])
