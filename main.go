@@ -44,5 +44,13 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	// pvesh set /access/acl -path /vms/{vmid} -roles PVEVMUser -groups SD_Users
+	cmd := exec.Command("pvesh", "set", "/access/acl", "-path", "/vms/"+split[3], "-roles", "PVEVMUser", "-groups", "SD_Users")
+
+	err = cmd.Run()
+	if err != nil {
+		return
+	}
+
 	log.Println(split[2], split[3], split[4])
 }
