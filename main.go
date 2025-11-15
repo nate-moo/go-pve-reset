@@ -12,13 +12,6 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "test.html")
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
-	_, err := w.Write([]byte("Hello World"))
-	if err != nil {
-		return
-	}
-}
-
 func main() {
 	http.HandleFunc("/reset", serveFile)
 	http.HandleFunc("/reset/", resetHandler)
@@ -34,8 +27,6 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 		vmID       [10]int
 		name       string
 	}
-
-	type vmid int
 
 	// Templates
 	var (
@@ -94,7 +85,12 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 	if corr == false || skip {
 		errorMSG := "Request Parameter Match Error. Check for valid VMID, TemplateID, or Name"
 		writer.WriteHeader(400)
-		writer.Write([]byte(errorMSG))
+
+		_, err := writer.Write([]byte(errorMSG))
+		if err != nil {
+			return
+		}
+
 		log.Fatal(errorMSG)
 		return
 	}

@@ -38,7 +38,7 @@
         for (const vm of vms) {
             let button = document.createElement("button");
             button.innerText = "Reset " + vm[0];
-            button.onclick = (e) => {
+            button.onclick = () => {
                 fetch("/reset/" + vm[1][0] + "/" + vm[1][1][0] + "/" + vm[0])
             }
             buttonBase.append(button);
