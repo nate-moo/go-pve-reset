@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -16,8 +17,43 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/reset", serveFile)
 	http.HandleFunc("/reset/", resetHandler)
+	http.HandleFunc("/reset/git-update", puller)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func puller(writer http.ResponseWriter, request *http.Request) {
+	err := request.ParseForm()
+	if err != nil {
+		return
+	}
+
+	sec := request.Form.Get("security")
+
+	file, err := os.Open("/root/webserver/secret")
+	if err != nil {
+		return
+	}
+
+	secCheck := []byte("1234567890")
+	_, err = file.Read(secCheck)
+	if err != nil {
+		return
+	}
+
+	if sec == string(secCheck) {
+		err := os.Chdir("/root/webserver/pve")
+		if err != nil {
+			log.Println("can't chdir")
+			return
+		}
+
+		log.Println("Success")
+
+		//exec.Command("git", "pull").Run()
+		//exec.Command("go", "build", ".").Run()
+		//exec.Command("systemctl", "restart", "pve-reset.service").Run()
+	}
 }
 
 func resetHandler(writer http.ResponseWriter, request *http.Request) {
