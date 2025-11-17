@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os/exec"
@@ -119,4 +120,12 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	log.Println("Template: "+strconv.Itoa(templateID), "Target: "+strconv.Itoa(targetID), targetName)
+
+	writer.WriteHeader(200)
+	msg := fmt.Sprintf("<html><head><title>Reset Success!</title></head><body>Reset of VM %s (%d -> %d) Successful!</body></html>", targetName, templateID, targetID)
+	log.Println(msg)
+	_, err = writer.Write([]byte(msg))
+	if err != nil {
+		return
+	}
 }
