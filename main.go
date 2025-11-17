@@ -31,22 +31,24 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 
 	// Templates
 	var (
-		UbuntuEasy1   = 110
-		UbuntuEasy2   = 111
-		UbuntuMedium1 = 120
-		UbuntuMedium2 = 121
-		SupportEasy1  = 210
-		SupportEasy2  = 211
+		UbuntuEasy1      = 110
+		UbuntuEasy2      = 111
+		UbuntuMedium1    = 120
+		UbuntuMedium2    = 121
+		SupportEasy1     = 210
+		SupportEasy2     = 211
+		UbuntuPlayground = 500
 	)
 
 	// mappings
 	var VMMap = map[int]vmFormat{
-		UbuntuEasy1:   {templateID: 110, vmID: [10]int{1101}, name: "Ubuntu-Easy-1"},
-		UbuntuEasy2:   {templateID: 111, vmID: [10]int{1111}, name: "Ubuntu-Easy-2"},
-		UbuntuMedium1: {templateID: 120, vmID: [10]int{1201}, name: "Ubuntu-Medium-1"},
-		UbuntuMedium2: {templateID: 121, vmID: [10]int{1211}, name: "Ubuntu-Medium-2"},
-		SupportEasy1:  {templateID: 210, vmID: [10]int{2101}, name: "Support-Easy-1"},
-		SupportEasy2:  {templateID: 211, vmID: [10]int{2111}, name: "Support-Easy-2"},
+		UbuntuEasy1:      {templateID: 110, vmID: [10]int{1101}, name: "Ubuntu-Easy-1"},
+		UbuntuEasy2:      {templateID: 111, vmID: [10]int{1111}, name: "Ubuntu-Easy-2"},
+		UbuntuMedium1:    {templateID: 120, vmID: [10]int{1201}, name: "Ubuntu-Medium-1"},
+		UbuntuMedium2:    {templateID: 121, vmID: [10]int{1211}, name: "Ubuntu-Medium-2"},
+		SupportEasy1:     {templateID: 210, vmID: [10]int{2101}, name: "Support-Easy-1"},
+		SupportEasy2:     {templateID: 211, vmID: [10]int{2111}, name: "Support-Easy-2"},
+		UbuntuPlayground: {templateID: 500, vmID: [10]int{5000}, name: "Ubuntu-Playground"},
 	}
 
 	var skip = false
