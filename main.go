@@ -50,9 +50,23 @@ func puller(writer http.ResponseWriter, request *http.Request) {
 
 		log.Println("Success")
 
-		//exec.Command("git", "pull").Run()
-		//exec.Command("go", "build", ".").Run()
-		//exec.Command("systemctl", "restart", "pve-reset.service").Run()
+		err = exec.Command("git", "pull").Run()
+		if err != nil {
+			log.Println("git pull failed")
+			return
+		}
+
+		err = exec.Command("go", "build", ".").Run()
+		if err != nil {
+			log.Println("go build failed")
+			return
+		}
+
+		err = exec.Command("systemctl", "restart", "pve-reset.service").Run()
+		if err != nil {
+			log.Println("service restart failed")
+			return
+		}
 	}
 }
 
