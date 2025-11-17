@@ -11,7 +11,7 @@ import (
 )
 
 func serveFile(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "test.html")
+	http.ServeFile(w, r, "/root/webserver/pve/test.html")
 }
 
 func main() {
