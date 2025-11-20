@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Beans</title>
+    <style>
+        #base {
+            display: block;
+        }
+
+        #base > button {
+            margin-inline: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>BEANS</h1>
+
+    <div id="base">
+
+    </div>
+
+    <a href="/reset_all"> Reset All </a>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("DOM Loaded")
+            let buttonBase = document.getElementById("base");
+            fetch('/manage/list.json').then((response) => {
+                response.json().then((data) => {
+                    for (const vm of data) {
+                        console.log(vm)
+                        let button = document.createElement("button");
+                        button.innerText = "Reset " + vm.Name;
+
+                        button.onclick = () => {
+                            fetch("/reset/" + vm.TemplateID + "/" + vm.VmID[0] + "/" + vm.Name)
+                        }
+
+                        buttonBase.append(button);
+                    }
+                })
+            })
+        })
+
+
+
+
+    </script>
+</body>
+</html>

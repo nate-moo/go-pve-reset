@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Management</title>
+</head>
+<body>
+    <h1>
+        Welcome to the Tuber's FRY Management Interface!
+    </h1>
+
+    <form method="post" action="/manage/create" style="display: block;">
+        <label for="username">Username: </label>
+
+        <input type="text" name="username" id="username" placeholder="username"/>
+        </br>
+        <label for="vmList">VM to update</label>
+        <select name="vm" id="vmList">
+
+        </select>
+        </br>
+        <button type="submit"> Submit </button>
+
+    </form>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM Loaded")
+    let selector = document.getElementById("vmList");
+    fetch('/manage/list.json').then((response) => {
+        response.json().then((data) => {
+            data.map(vm => vm.Name).forEach( name => {
+                let element = document.createElement("option")
+                element.innerText = name;
+                selector.appendChild(element)
+            });
+        })
+    })
+})
+    </script>
+</body>
+</html>
