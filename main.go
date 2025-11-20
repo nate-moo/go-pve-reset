@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,6 +10,12 @@ import (
 	"strconv"
 	"strings"
 )
+
+type vmFormat struct {
+	TemplateID int
+	VmID       [10]int
+	Name       string
+}
 
 func serveFile(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "/root/webserver/pve/test.html")
@@ -73,32 +80,40 @@ func puller(writer http.ResponseWriter, request *http.Request) {
 func resetHandler(writer http.ResponseWriter, request *http.Request) {
 	split := strings.Split(request.URL.String(), "/")
 
-	type vmFormat struct {
-		templateID int
-		vmID       [10]int
-		name       string
+	// Templates
+	//var (
+	//	UbuntuEasy1      = 110
+	//	UbuntuEasy2      = 111
+	//	UbuntuMedium1    = 120
+	//	UbuntuMedium2    = 121
+	//	SupportEasy1     = 210
+	//	SupportEasy2     = 211
+	//	UbuntuPlayground = 500
+	//)
+	//
+	//// mappings
+	//var VMMap = map[int]vmFormat{
+	//	UbuntuEasy1:      {TemplateID: 110, VmID: [10]int{1101}, Name: "Ubuntu-Easy-1"},
+	//	UbuntuEasy2:      {TemplateID: 111, VmID: [10]int{1111}, Name: "Ubuntu-Easy-2"},
+	//	UbuntuMedium1:    {TemplateID: 120, VmID: [10]int{1201}, Name: "Ubuntu-Medium-1"},
+	//	UbuntuMedium2:    {TemplateID: 121, VmID: [10]int{1211}, Name: "Ubuntu-Medium-2"},
+	//	SupportEasy1:     {TemplateID: 210, VmID: [10]int{2101}, Name: "Support-Easy-1"},
+	//	SupportEasy2:     {TemplateID: 211, VmID: [10]int{2111}, Name: "Support-Easy-2"},
+	//	UbuntuPlayground: {TemplateID: 500, VmID: [10]int{5000}, Name: "Ubuntu-Playground"},
+	//}
+
+	b, err := os.ReadFile("vms.json")
+	if err != nil {
+		log.Println("Failed to read vms.json")
+		return
 	}
 
-	// Templates
-	var (
-		UbuntuEasy1      = 110
-		UbuntuEasy2      = 111
-		UbuntuMedium1    = 120
-		UbuntuMedium2    = 121
-		SupportEasy1     = 210
-		SupportEasy2     = 211
-		UbuntuPlayground = 500
-	)
+	var vmList []vmFormat
 
-	// mappings
-	var VMMap = map[int]vmFormat{
-		UbuntuEasy1:      {templateID: 110, vmID: [10]int{1101}, name: "Ubuntu-Easy-1"},
-		UbuntuEasy2:      {templateID: 111, vmID: [10]int{1111}, name: "Ubuntu-Easy-2"},
-		UbuntuMedium1:    {templateID: 120, vmID: [10]int{1201}, name: "Ubuntu-Medium-1"},
-		UbuntuMedium2:    {templateID: 121, vmID: [10]int{1211}, name: "Ubuntu-Medium-2"},
-		SupportEasy1:     {templateID: 210, vmID: [10]int{2101}, name: "Support-Easy-1"},
-		SupportEasy2:     {templateID: 211, vmID: [10]int{2111}, name: "Support-Easy-2"},
-		UbuntuPlayground: {templateID: 500, vmID: [10]int{5000}, name: "Ubuntu-Playground"},
+	err = json.Unmarshal(b, &vmList)
+	if err != nil {
+		log.Println("Failed to parse vms.json")
+		return
 	}
 
 	var skip = false
@@ -124,10 +139,10 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if !skip {
-		for _, vm := range VMMap {
-			if vm.templateID == templateID {
-				for _, vmID := range vm.vmID {
-					if vmID == targetID && vm.name == targetName {
+		for _, vm := range vmList {
+			if vm.TemplateID == templateID {
+				for _, vmID := range vm.VmID {
+					if vmID == targetID && vm.Name == targetName {
 						corr = true
 					}
 				}
