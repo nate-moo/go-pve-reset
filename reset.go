@@ -75,17 +75,33 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	err = exec.Command("qm", "stop", strconv.Itoa(targetID)).Run()
+	update(templateID, targetID, targetName, true)
+
+	log.Println("Template: "+strconv.Itoa(templateID), "Target: "+strconv.Itoa(targetID), targetName)
+
+	writer.WriteHeader(200)
+	msg := fmt.Sprintf("<html><head><title>Reset Success!</title></head><body>Reset of VM %s (%d -> %d) Successful!</body></html>", targetName, templateID, targetID)
+	log.Println(msg)
+	_, err = writer.Write([]byte(msg))
 	if err != nil {
-		log.Println("qm stop " + strconv.Itoa(targetID) + "failed")
+		return
+	}
+}
+
+func update(templateID int, targetID int, targetName string, reset bool) {
+	if reset {
+		err := exec.Command("qm", "stop", strconv.Itoa(targetID)).Run()
+		if err != nil {
+			log.Println("qm stop " + strconv.Itoa(targetID) + "failed")
+		}
+
+		err = exec.Command("qm", "destroy", strconv.Itoa(targetID)).Run()
+		if err != nil {
+			log.Println("qm destroy " + strconv.Itoa(targetID) + "failed")
+		}
 	}
 
-	err = exec.Command("qm", "destroy", strconv.Itoa(targetID)).Run()
-	if err != nil {
-		log.Println("qm destroy " + strconv.Itoa(targetID) + "failed")
-	}
-
-	err = exec.Command("qm", "clone", strconv.Itoa(templateID), strconv.Itoa(targetID), "--name", targetName).Run()
+	err := exec.Command("qm", "clone", strconv.Itoa(templateID), strconv.Itoa(targetID), "--name", targetName).Run()
 	if err != nil {
 		log.Println("qm clone " + strconv.Itoa(templateID) + "->" + strconv.Itoa(targetID) + "failed")
 	}
@@ -96,15 +112,5 @@ func resetHandler(writer http.ResponseWriter, request *http.Request) {
 	err = cmd.Run()
 	if err != nil {
 		log.Println("pvesh " + "set " + "/access/acl " + "-path " + "/vms/" + strconv.Itoa(targetID) + " -roles " + "PVEVMUser " + "-groups " + "SD_Users " + "failed")
-	}
-
-	log.Println("Template: "+strconv.Itoa(templateID), "Target: "+strconv.Itoa(targetID), targetName)
-
-	writer.WriteHeader(200)
-	msg := fmt.Sprintf("<html><head><title>Reset Success!</title></head><body>Reset of VM %s (%d -> %d) Successful!</body></html>", targetName, templateID, targetID)
-	log.Println(msg)
-	_, err = writer.Write([]byte(msg))
-	if err != nil {
-		return
 	}
 }
